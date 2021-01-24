@@ -28,6 +28,7 @@ gem 'bootsnap', '>= 1.4.2', require: false
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'rspec-rails', '~> 4.0.0.beta2'
 end
 
 group :development do
@@ -39,3 +40,19 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
+
+group :test do
+  # factory_bot is a fixtures replacement with a straightforward definition syntax, 
+  # support for multiple build strategies (saved instances, unsaved instances, attribute hashes, 
+  # and stubbed objects), and support for multiple factories for the same class 
+  # (user, admin_user, and so on), including factory inheritance. https://github.com/thoughtbot/factory_bot_rails
+  gem 'factory_bot_rails', '~> 4.0'
+  # Shoulda Matchers provides RSpec- and Minitest-compatible one-liners to test common Rails functionality that, 
+  # if written by hand, would be much longer, more complex, and error-prone. https://github.com/thoughtbot/shoulda-matchers
+  gem 'shoulda-matchers', '~> 3.1'
+  # A library for generating fake data such as names, addresses, and phone numbers. https://github.com/faker-ruby/faker
+  gem 'faker'
+  # Database Cleaner is a set of gems containing strategies for cleaning your database in Ruby. 
+  # https://github.com/DatabaseCleaner/database_cleaner
+  gem 'database_cleaner'
+end
