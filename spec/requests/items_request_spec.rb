@@ -1,29 +1,29 @@
 require 'rails_helper'
 
-RSpec.describe "Items", type: :request do
+RSpec.describe 'Items API' do
   let!(:todo) { create(:todo) }
-  let!(:item) { create_list(:item, 20, todo_id: todo.id) }
+  let!(:items) { create_list(:item, 20, todo_id: todo.id) }
   let(:todo_id) { todo.id }
   let(:id) { items.first.id }
 
-  describe "GET /todos/:todo_id/items" do
+  describe 'GET /todos/:todo_id/items' do
     before { get "/todos/#{todo_id}/items" }
 
-    context "when todo exists" do
+    context 'when todo exists' do
       it 'returns status code 200' do
         expect(response).to have_http_status(200)
       end
 
-      it 'return all todo items' do
-        expect(jsom.size).to eq(20)
+      it 'returns all todo items' do
+        expect(json.size).to eq(20)
       end
     end
 
-    context "when todo does not exists" do
-      let (:todo_id) { 0 }
-      
+    context 'when todo does not exist' do
+      let(:todo_id) { 0 }
+
       it 'returns status code 404' do
-        expect(response).to  have_http_status(404)
+        expect(response).to have_http_status(404)
       end
 
       it 'returns a not found message' do
@@ -32,12 +32,12 @@ RSpec.describe "Items", type: :request do
     end
   end
 
-  describe "GET /todos/:todo_id/items/:id" do
-    before { get "/todos/#{todo_id}/items/#{id}" } 
-    
-    context "when todo item exists" do
-      it "returns status code 200" do
-        expect(response).to have_http_status(200) 
+  describe 'GET /todos/:todo_id/items/:id' do
+    before { get "/todos/#{todo_id}/items/#{id}" }
+
+    context 'when todo item exists' do
+      it 'returns status code 200' do
+        expect(response).to have_http_status(200)
       end
 
       it 'returns the item' do
@@ -45,48 +45,50 @@ RSpec.describe "Items", type: :request do
       end
     end
 
-    context "when todo item does not exist" do
-      it 'return a status code 404' do
-        expect(response).to  have_http_status(404)        
+    context 'when todo item does not exist' do
+      let(:id) { 0 }
+
+      it 'returns status code 404' do
+        expect(response).to have_http_status(404)
       end
 
       it 'returns a not found message' do
-       expect(response.body).to match(/Couldn't find Item/) 
+        expect(response.body).to match(/Couldn't find Item/)
       end
     end
   end
 
-  describe "POST /todos/:todo_id/items" do
+  describe 'POST /todos/:todo_id/items' do
     let(:valid_attributes) { { item: { name: 'Visit Narnia', done: false } } }
 
-    context "when requests attributes are valid" do
-      before { post "/todos/#{todo_id}/items". params: valid_attributes } 
-      
-      it "return status code 201" do
-        expect(response).to have_http_status(201)  
+    context 'when request attributes are valid' do
+      before { post "/todos/#{todo_id}/items", params: valid_attributes }
+
+      it 'returns status code 201' do
+        expect(response).to have_http_status(201)
       end
     end
 
-    context "when an invalid request" do
-      before { post "/todos/#{todo_id}/items", params: {} }
+    context 'when an invalid request' do
+      before { post "/todos/#{todo_id}/items", params: { item: { } } }
 
-      it 'returns status code 422' do
-        expect(response).to  have_http_status(422)
+      it 'returns status code 400' do
+        expect(response).to have_http_status(400)
       end
 
       it 'returns a failure message' do
-        expect(response.body).to match(/Validation failed: Name can't be blank/)
+        expect(response.body).to match(/param is missing or the value is empty: item/)
       end
     end
   end
 
-  describe "PUT /todos/:todo_id/items/:id" do
+  describe 'PUT /todos/:todo_id/items/:id' do
     let(:valid_attributes) { { item: { name: 'Mozart' } } }
 
-    before { put "/todos/#{todo_id}/items/#{id}", params: valid_attributes } 
+    before { put "/todos/#{todo_id}/items/#{id}", params: valid_attributes }
 
-    context "when item exists" do
-      it "returns status code 204" do
+    context 'when item exists' do
+      it 'returns status code 204' do
         expect(response).to have_http_status(204)
       end
 
@@ -96,7 +98,7 @@ RSpec.describe "Items", type: :request do
       end
     end
 
-    context "when the item does not exist" do
+    context 'when the item does not exist' do
       let(:id) { 0 }
 
       it 'returns status code 404' do
@@ -104,16 +106,16 @@ RSpec.describe "Items", type: :request do
       end
 
       it 'returns a not found message' do
-        expect(response.body).to match(/Coudn't find Item/)
+        expect(response.body).to match(/Couldn't find Item/)
       end
     end
   end
-  
-  describe "DELETE /todos/:todo_id/item/:id" do
+
+  describe 'DELETE /todos/:id' do
     before { delete "/todos/#{todo_id}/items/#{id}" }
 
     it 'returns status code 204' do
-      expect(response).to  have_http_status(204)
+      expect(response).to have_http_status(204)
     end
   end
 end
