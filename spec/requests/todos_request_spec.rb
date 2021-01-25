@@ -35,7 +35,7 @@ RSpec.describe "Todos", type: :request do
       let(:todo_id) { 100 }
       
       it 'returns status code 404' do
-        expect(json).to have_http_status(404)
+        expect(response).to have_http_status(404)
       end
 
       it 'return a not found message' do
@@ -45,7 +45,7 @@ RSpec.describe "Todos", type: :request do
   end
 
   describe "POST /todos" do
-    let(:valid_attributes) { { title: 'Learn Elm', created_by: '1' } }
+    let(:valid_attributes) { { todo: { title: 'Learn Elm', created_by: '1' } } }
 
     context "when the request is valid" do
       before { post '/todos', params: valid_attributes }
@@ -55,14 +55,18 @@ RSpec.describe "Todos", type: :request do
       end
 
       it 'returns status code 201' do
-        expect(response.status).to have_http_status(201)
+        expect(response).to have_http_status(201)
       end
     end
 
     context "when the request is invalid" do
-      before { post '/todos', params: { title: 'Foobar' } }
+      before { post '/todos', params: { todo: { title: 'Foobar' } } }
 
       it 'returns status code 422' do
+        expect(response).to have_http_status(422)
+      end
+
+      it 'returns a validation failure message' do
         expect(response.body)
           .to match(/Validation failed: Created by can't be blank/)
       end
@@ -70,13 +74,13 @@ RSpec.describe "Todos", type: :request do
   end
 
   describe "PUT /todos/:id" do
-    let(:valid_attributes) { { title: 'Shopping' } }
+    let(:valid_attributes) { { todo: { title: 'Shopping' } } }
 
     context "when the record exists" do
       before { put "/todos/#{todo_id}", params: valid_attributes }
 
       it 'updates the record' do
-        expect(response.body).not_to be_empty
+        expect(response.body).to be_empty
       end
 
       it 'return status code 204' do
